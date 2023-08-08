@@ -1,6 +1,12 @@
 import express, { Application } from 'express';
 import routerCliente from '../routes/cliente.routes';
 import { Cliente } from './cliente.model';
+import routerProductos from '../routes/productos.routes';
+import { Producto } from './producto.model';
+import cors from 'cors';
+import { PrecioProducto } from './precio.producto.model';
+import { Venta } from './venta.model';
+import { Pedido } from './pedido.model';
 
 export class Server{
     private app:Application;
@@ -25,16 +31,23 @@ export class Server{
 
     routes(){
         this.app.use('/client',routerCliente);
+        this.app.use('/productos', routerProductos);
 
     }
 
     middlewares(){
         this.app.use(express.json());
+
+        this.app.use(cors())
     }
 
     async dbConnect(){
         try{
             await Cliente.sync();
+            await Producto.sync();
+            await PrecioProducto.sync();
+            await Pedido.sync();
+            await Venta.sync();
         }
         catch(error){
             console.error('No fue posible conectarse a la base de datos', error)
