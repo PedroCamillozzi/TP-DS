@@ -1,5 +1,6 @@
 import {DataTypes} from "sequelize";
 import sequelize from "../db/connection";
+import { PrecioProducto } from "./precioProducto.model";
 
 
 export const Producto = sequelize.define('producto', {
@@ -20,9 +21,17 @@ export const Producto = sequelize.define('producto', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    stock:{
+        type: DataTypes.INTEGER
+    }
     /*imagen:{
         type: DataTypes.BLOB,
         allowNull: false
     },*/
 
+})
+
+Producto.hasMany(PrecioProducto, {
+    foreignKey: 'idProducto',
+    as: 'precios'
 })

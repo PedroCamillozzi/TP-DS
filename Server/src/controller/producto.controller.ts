@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Producto } from "../model/producto.model";
-import { PrecioProducto } from "../model/precio.producto.model";
-import { DATE, Model, where } from "sequelize";
+import { PrecioProducto } from "../model/precioProducto.model";
+import { DATE, Model, QueryTypes, where } from "sequelize";
 import sequelize from "../db/connection";
 
 
@@ -44,7 +44,7 @@ export const postProducto = async (req:Request, res:Response) =>{
 }
 
 export const putProducto = async (req:Request, res:Response) =>{
-    const {idProducto, nombreProducto, descripcion, detallesGenerales, precio} = req.body;
+    const {idProducto, nombreProducto, descripcion, detallesGenerales, fechaDesde, precio} = req.body;
 
     const producto = await Producto.findOne({where:{idProducto: idProducto}});
 
@@ -55,26 +55,54 @@ export const putProducto = async (req:Request, res:Response) =>{
         return
     }
 
-    const precioMax = await PrecioProducto.max('fechaDesde',{where:{idProducto:idProducto}})
+    const fechaMax = await PrecioProducto.max('fechaDesde',{where:{idProducto:idProducto}})
     //Funciona hasta Acá
+    console.log(fechaMax);
 
+
+    
 
     // const precioAct = await Producto.findAll({where:{idProducto: idProducto},include:[{model:PrecioProducto, required:true, where:{fechaDesde:precioMax}}]}).then(posts => {/*...*/})
     
     // Select p.idProducto, nombreProducto, descripcion, detallesGenerales From productos p Inner Join PrecioProducto pp ON pp.idProducto = p.idProducto Where pp.fechaDesde = precioMax(es la fecha)
-    return
+
+    /*const productos = await sequelize.query( //No me gusta usarla así por el SQLInyedction
+        'Select p.idProducto, p.nombreProducto, p.descripcion, p.detallesGenerales, pp.fechaDesde From productos p Inner Join PrecioProductos pp ON pp.idProducto = p.idProducto Where Date(pp.fechaDesde) = Date(?)',
+        {
+            replacements:[fechaMax], //No se porque me toma 3hs distintas a lo que está cargado en la BBDD y tengo que usar la funcion Date() Para que ande
+            type: QueryTypes.SELECT,
+            
+        }
+    )
+    console.log(productos);
+    res.json({
+        msg: productos.fechaDesde
+    })*/
+
+   
     try{
-        producto.set({
+        producto.update({
             nombreProducto: nombreProducto,
             descripcion: descripcion,
             detallesGenerales: detallesGenerales
+        }, {
+            where: {
+                idProducto: idProducto
+            }
         })
-        if(precioMax !== precioAct.fechaDesde){
+        if(fechaDesde !== undefined && fechaMax !== fechaDesde){
             PrecioProducto.create({
                 idProducto: producto.idProducto,
-                fechaDesde: precioAct.fechaDesde
+                fechaDesde: fechaDesde
             });
+            res.status(200).json({
+                msg:"Precio y Producto Actualizado"
+            });
+            return
         }
+        res.status(200).json({
+            msg:"Producto Actualizado"
+        })
 
     }catch(error){
         res.status(400).json({

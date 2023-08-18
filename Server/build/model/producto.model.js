@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Producto = void 0;
 const sequelize_1 = require("sequelize");
 const connection_1 = __importDefault(require("../db/connection"));
+const precioProducto_model_1 = require("./precioProducto.model");
 exports.Producto = connection_1.default.define('producto', {
     idProducto: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -24,8 +25,15 @@ exports.Producto = connection_1.default.define('producto', {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false
     },
+    stock: {
+        type: sequelize_1.DataTypes.INTEGER
+    }
     /*imagen:{
         type: DataTypes.BLOB,
         allowNull: false
     },*/
+});
+exports.Producto.hasMany(precioProducto_model_1.PrecioProducto, {
+    foreignKey: 'idProducto',
+    as: 'precios'
 });

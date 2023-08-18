@@ -19,9 +19,13 @@ const cliente_model_1 = require("./cliente.model");
 const productos_routes_1 = __importDefault(require("../routes/productos.routes"));
 const producto_model_1 = require("./producto.model");
 const cors_1 = __importDefault(require("cors"));
-const precio_producto_model_1 = require("./precio.producto.model");
-const venta_model_1 = require("./venta.model");
+const precioProducto_model_1 = require("./precioProducto.model");
+const DetallePedido_model_1 = require("./DetallePedido.model");
 const pedido_model_1 = require("./pedido.model");
+const carrito_model_1 = require("./carrito.model");
+const lista_carrito_producto_1 = require("./lista.carrito.producto");
+const precioProducto_routes_1 = __importDefault(require("../routes/precioProducto.routes"));
+const carrito_routes_1 = __importDefault(require("../routes/carrito.routes"));
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
@@ -39,6 +43,8 @@ class Server {
     routes() {
         this.app.use('/client', cliente_routes_1.default);
         this.app.use('/productos', productos_routes_1.default);
+        this.app.use('/precioProductos', precioProducto_routes_1.default);
+        this.app.use('/carrito', carrito_routes_1.default);
     }
     middlewares() {
         this.app.use(express_1.default.json());
@@ -49,9 +55,11 @@ class Server {
             try {
                 yield cliente_model_1.Cliente.sync();
                 yield producto_model_1.Producto.sync();
-                yield precio_producto_model_1.PrecioProducto.sync();
+                yield precioProducto_model_1.PrecioProducto.sync();
                 yield pedido_model_1.Pedido.sync();
-                yield venta_model_1.Venta.sync();
+                yield DetallePedido_model_1.DetallePedido.sync();
+                yield carrito_model_1.Carrito.sync();
+                yield lista_carrito_producto_1.ListaCarritoProducto.sync();
             }
             catch (error) {
                 console.error('No fue posible conectarse a la base de datos', error);

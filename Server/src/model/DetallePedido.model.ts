@@ -4,7 +4,7 @@ import { Producto } from "./producto.model";
 import { Pedido } from "./pedido.model";
 
 
-export const Venta = sequelize.define('venta', {
+export const DetallePedido = sequelize.define('DetallePedido', {
     idPedido:{
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -20,10 +20,6 @@ export const Venta = sequelize.define('venta', {
             model: Producto,
             key: 'idProducto'
         }
-    },
-    fechaVenta:{
-        type: DataTypes.DATE,
-        primaryKey: true
     },
     cantidad:{
         type:DataTypes.INTEGER

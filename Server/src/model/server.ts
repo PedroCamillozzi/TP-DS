@@ -4,9 +4,13 @@ import { Cliente } from './cliente.model';
 import routerProductos from '../routes/productos.routes';
 import { Producto } from './producto.model';
 import cors from 'cors';
-import { PrecioProducto } from './precio.producto.model';
-import { Venta } from './venta.model';
+import { PrecioProducto } from './precioProducto.model';
+import { DetallePedido } from './DetallePedido.model';
 import { Pedido } from './pedido.model';
+import { Carrito } from './carrito.model';
+import { ListaCarritoProducto } from './lista.carrito.producto';
+import routerPrecioProductos from '../routes/precioProducto.routes';
+import routerCarrito from '../routes/carrito.routes';
 
 export class Server{
     private app:Application;
@@ -32,6 +36,8 @@ export class Server{
     routes(){
         this.app.use('/client',routerCliente);
         this.app.use('/productos', routerProductos);
+        this.app.use('/precioProductos', routerPrecioProductos);
+        this.app.use('/carrito', routerCarrito)
 
     }
 
@@ -47,7 +53,9 @@ export class Server{
             await Producto.sync();
             await PrecioProducto.sync();
             await Pedido.sync();
-            await Venta.sync();
+            await DetallePedido.sync();
+            await Carrito.sync();
+            await ListaCarritoProducto.sync();
         }
         catch(error){
             console.error('No fue posible conectarse a la base de datos', error)

@@ -6,6 +6,7 @@ const routerProductos = Router();
 
 routerProductos.get('/all', getProductos);
 routerProductos.post('/', postProducto);
-routerProductos.put('/put', putProducto)
+routerProductos.put('/put', putProducto);
+//routerProductos.delete('');
 
 export default routerProductos;
