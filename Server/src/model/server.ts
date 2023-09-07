@@ -7,10 +7,10 @@ import cors from 'cors';
 import { PrecioProducto } from './precioProducto.model';
 import { DetallePedido } from './DetallePedido.model';
 import { Pedido } from './pedido.model';
-import { Carrito } from './carrito.model';
-import { ListaCarritoProducto } from './lista.carrito.producto';
+
 import routerPrecioProductos from '../routes/precioProducto.routes';
 import routerCarrito from '../routes/carrito.routes';
+import { Carrito } from './carrito.producto';
 
 export class Server{
     private app:Application;
@@ -55,7 +55,6 @@ export class Server{
             await Pedido.sync();
             await DetallePedido.sync();
             await Carrito.sync();
-            await ListaCarritoProducto.sync();
         }
         catch(error){
             console.error('No fue posible conectarse a la base de datos', error)

@@ -22,10 +22,9 @@ const cors_1 = __importDefault(require("cors"));
 const precioProducto_model_1 = require("./precioProducto.model");
 const DetallePedido_model_1 = require("./DetallePedido.model");
 const pedido_model_1 = require("./pedido.model");
-const carrito_model_1 = require("./carrito.model");
-const lista_carrito_producto_1 = require("./lista.carrito.producto");
 const precioProducto_routes_1 = __importDefault(require("../routes/precioProducto.routes"));
 const carrito_routes_1 = __importDefault(require("../routes/carrito.routes"));
+const carrito_producto_1 = require("./carrito.producto");
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
@@ -58,8 +57,7 @@ class Server {
                 yield precioProducto_model_1.PrecioProducto.sync();
                 yield pedido_model_1.Pedido.sync();
                 yield DetallePedido_model_1.DetallePedido.sync();
-                yield carrito_model_1.Carrito.sync();
-                yield lista_carrito_producto_1.ListaCarritoProducto.sync();
+                yield carrito_producto_1.Carrito.sync();
             }
             catch (error) {
                 console.error('No fue posible conectarse a la base de datos', error);

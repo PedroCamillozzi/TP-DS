@@ -71,6 +71,7 @@ const loginCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }, process.env.SECRETKEY || '332211', {
     //expiresIn: '100000'
     });
-    res.json(token);
+    const idCliente = cliente.idCliente;
+    res.json({ token, idCliente });
 });
 exports.loginCliente = loginCliente;

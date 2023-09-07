@@ -9,25 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postProductoCliente = exports.getProductosCliente = void 0;
+exports.deleteProductoCliente = exports.patchProductoCliente = exports.getProductosCliente = void 0;
 const cliente_model_1 = require("../model/cliente.model");
 const producto_model_1 = require("../model/producto.model");
-const lista_carrito_producto_1 = require("../model/lista.carrito.producto");
+const carrito_producto_1 = require("../model/carrito.producto");
 const getProductosCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { idCliente, nroCarrito, idProducto, cantidad } = req.params;
-    const listaCarritoCliente = yield lista_carrito_producto_1.ListaCarritoProducto.findAll({ where: { idProducto: idProducto } && { idCliente: idCliente } && { nroCarrito: nroCarrito } });
+    const { idCliente } = req.params;
+    const listaCarritoCliente = yield carrito_producto_1.Carrito.findAll({ where: { idCliente: idCliente } });
     if (!listaCarritoCliente) {
         res.status(400).json({
             msg: "No se pudo obtener la lista del carrito"
         });
     }
-    res.json({
-        listaCarritoCliente
-    });
+    res.json(listaCarritoCliente);
 });
 exports.getProductosCliente = getProductosCliente;
-const postProductoCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { idCliente, idProducto, cantidad } = req.params;
+const patchProductoCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idCliente, idProducto, cantidad } = req.body;
     const cliente = yield cliente_model_1.Cliente.findOne({ where: { idCliente: idCliente } });
     if (!cliente) {
         res.status(400).json({
@@ -42,28 +40,72 @@ const postProductoCliente = (req, res) => __awaiter(void 0, void 0, void 0, func
         });
         return;
     }
-    if (producto.stock <= 0 || cantidad > producto.stock) {
+    const carrito = yield carrito_producto_1.Carrito.findOne({ where: { idCliente: idCliente } && { idProducto: idProducto } });
+    if (producto.stock <= 0 || (carrito.cantidad + cantidad) > producto.stock) {
         res.status(400).json({
             msg: "No hay stock disponible por el momento"
         });
         return;
     }
+    /*Puede el backEnd llamar a una funcion dentro de él? Por ejemplo quiero que no existe el producto dentro del carrito
+que lo cree, en ese caso, puedo llamar a una funcion postCarritoCliente que haga lo de abajo por ejemplo?
+*/
+    if (!carrito) {
+        try {
+            yield carrito_producto_1.Carrito.create({
+                idProducto: producto.idProducto,
+                idCliente: cliente.idCliente,
+                cantidad: cantidad,
+            });
+            res.status(201).json({
+                msg: "Producto agregado al carrito satisfactoriamente"
+            });
+        }
+        catch (error) {
+            res.status(400).json({
+                msg: "Ocurrió un error al sumar el producto al carrito",
+                error,
+            });
+        }
+    }
+    else {
+        try {
+            yield carrito_producto_1.Carrito.update({
+                cantidad: carrito.cantidad + cantidad
+            }, {
+                where: { idCliente: idCliente, idProducto: idProducto },
+            });
+            res.status(200).json({ msg: "Carrito actualizado con éxito" });
+        }
+        catch (err) {
+            res.status(400).json({
+                msg: "No se pudo actualizar el carrito",
+                err,
+            });
+        }
+    }
+});
+exports.patchProductoCliente = patchProductoCliente;
+const deleteProductoCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idCliente, idProducto } = req.params;
+    const productoAremover = yield carrito_producto_1.Carrito.findOne({ where: { idCliente: idCliente } && { idProducto: idProducto } });
+    if (!productoAremover) {
+        res.status(400).json({
+            msg: "No se pudo obtener la lista del carrito"
+        });
+    }
     try {
-        yield lista_carrito_producto_1.ListaCarritoProducto.create({
-            idProducto: producto.idProducto,
-            nroCarrito: 1,
-            idCliente: cliente.idCliente,
-            cantidad: cantidad
+        yield carrito_producto_1.Carrito.destroy({
+            where: { idCliente: productoAremover.idCliente } && { idProducto: productoAremover.idProducto }
         });
     }
     catch (error) {
         res.status(400).json({
-            msg: "Ocurrio un error al sumar el producto al carrito",
-            error
+            msg: "No se encontro el producto a remover", error
         });
     }
     res.status(200).json({
-        msg: "Producto agregado al carrito satisfactoriamente"
+        msg: "Producto removido correctamente"
     });
 });
-exports.postProductoCliente = postProductoCliente;
+exports.deleteProductoCliente = deleteProductoCliente;

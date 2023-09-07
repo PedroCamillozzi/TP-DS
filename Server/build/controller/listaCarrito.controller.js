@@ -12,10 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteProductoCliente = exports.postProductoCliente = exports.getProductosCliente = void 0;
 const cliente_model_1 = require("../model/cliente.model");
 const producto_model_1 = require("../model/producto.model");
-const lista_carrito_producto_1 = require("../model/lista.carrito.producto");
+const carrito_producto_1 = require("../model/carrito.producto");
 const getProductosCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idCliente, nroCarrito } = req.params;
-    const listaCarritoCliente = yield lista_carrito_producto_1.ListaCarritoProducto.findAll({ where: { idCliente: idCliente } && { nroCarrito: nroCarrito } });
+    const listaCarritoCliente = yield carrito_producto_1.ListaCarritoProducto.findAll({ where: { idCliente: idCliente } && { nroCarrito: nroCarrito } });
     if (!listaCarritoCliente) {
         res.status(400).json({
             msg: "No se pudo obtener la lista del carrito"
@@ -49,7 +49,7 @@ const postProductoCliente = (req, res) => __awaiter(void 0, void 0, void 0, func
         return;
     }
     try {
-        yield lista_carrito_producto_1.ListaCarritoProducto.create({
+        yield carrito_producto_1.ListaCarritoProducto.create({
             idProducto: producto.idProducto,
             nroCarrito: 1,
             idCliente: cliente.idCliente,
@@ -69,14 +69,14 @@ const postProductoCliente = (req, res) => __awaiter(void 0, void 0, void 0, func
 exports.postProductoCliente = postProductoCliente;
 const deleteProductoCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idCliente, nroCarrito, idProducto } = req.params;
-    const productoAremover = yield lista_carrito_producto_1.ListaCarritoProducto.findOne({ where: { idCliente: idCliente } && { nroCarrito: nroCarrito } && { idProducto: idProducto } });
+    const productoAremover = yield carrito_producto_1.ListaCarritoProducto.findOne({ where: { idCliente: idCliente } && { nroCarrito: nroCarrito } && { idProducto: idProducto } });
     if (!productoAremover) {
         res.status(400).json({
             msg: "No se pudo obtener la lista del carrito"
         });
     }
     try {
-        yield lista_carrito_producto_1.ListaCarritoProducto.destroy({
+        yield carrito_producto_1.ListaCarritoProducto.destroy({
             where: { idCliente: productoAremover.idCliente } && { nroCarrito: productoAremover.nroCarrito } && { idProducto: productoAremover.idProducto }
         });
     }

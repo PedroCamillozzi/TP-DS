@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.putProducto = exports.postProducto = exports.getProductos = void 0;
+exports.putProducto = exports.postProducto = exports.getProducto = exports.getProductos = void 0;
 const producto_model_1 = require("../model/producto.model");
 const precioProducto_model_1 = require("../model/precioProducto.model");
 const getProductos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -17,6 +17,18 @@ const getProductos = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     res.json(listaProductos);
 });
 exports.getProductos = getProductos;
+const getProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idProducto } = req.params;
+    const producto = yield producto_model_1.Producto.findOne({ where: { idProducto: idProducto } });
+    if (!producto) {
+        res.status(400).json({
+            msg: "No se ha encontrado el producto"
+        });
+        return;
+    }
+    res.json(producto);
+});
+exports.getProducto = getProducto;
 const postProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { nombreProducto, descripcion, detallesGenerales, /*, imagen,*/ precio } = req.body;
     try {

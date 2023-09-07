@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { deleteProductoCliente, getProductosCliente, postProductoCliente } from "../controller/listaCarrito.controller";
+import { deleteProductoCliente, getProductosCliente, patchProductoCliente } from "../controller/Carrito.controller";
 
 
 const routerCarrito = Router();
 
-routerCarrito.get('/:idCliente/:nroCarrito', getProductosCliente);
-routerCarrito.post('/:idCliente/:idProducto/:cantidad', postProductoCliente);
-routerCarrito.delete('/:idCliente/:idProducto/:nroCarrito', deleteProductoCliente );
+routerCarrito.get('/:idCliente', getProductosCliente);
+routerCarrito.patch('/addItem', patchProductoCliente);
+routerCarrito.delete('/:idCliente/:idProducto', deleteProductoCliente );
 
 export default routerCarrito;

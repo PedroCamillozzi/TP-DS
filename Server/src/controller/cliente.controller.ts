@@ -73,5 +73,7 @@ export const loginCliente = async (req:Request, res:Response)=>{
     }
     );
 
-    res.json(token)
+    const idCliente = cliente.idCliente
+
+    res.json({token, idCliente})
 }

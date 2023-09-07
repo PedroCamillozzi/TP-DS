@@ -12,6 +12,21 @@ export const getProductos = async (req:Request, res:Response) =>{
     )
 }
 
+export const getProducto = async (req:Request, res:Response) =>{
+    const {idProducto} = req.params
+
+    const producto = await Producto.findOne({where:{idProducto:idProducto}});
+
+    if(!producto){
+        res.status(400).json({
+            msg: "No se ha encontrado el producto"
+        })
+        return
+    }
+
+    res.json(producto)
+}
+
 export const postProducto = async (req:Request, res:Response) =>{
     const {nombreProducto, descripcion, detallesGenerales,/*, imagen,*/ precio} = req.body;
 
