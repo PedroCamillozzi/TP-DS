@@ -12,11 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginCliente = exports.newCliente = void 0;
 const cliente_model_1 = require("../model/cliente.model");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const newCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.newCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { nombre, apellido, dni, email, contraseña, telefono } = req.body;
     try {
         const existingCliente = yield cliente_model_1.Cliente.findOne({ where: { dni: dni } || { email: email } });
@@ -51,8 +50,7 @@ const newCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
     }
 });
-exports.newCliente = newCliente;
-const loginCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.loginCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, contraseña } = req.body;
     const cliente = yield cliente_model_1.Cliente.findOne({ where: { email: email } });
     if (!cliente) {
@@ -74,4 +72,3 @@ const loginCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const idCliente = cliente.idCliente;
     res.json({ token, idCliente });
 });
-exports.loginCliente = loginCliente;
