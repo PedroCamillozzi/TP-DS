@@ -12,15 +12,10 @@ export const getPrecioActualProducto = async (req: Request, res: Response) => {
     });
 
     if (precioActProduct) {
-        const idProducto = precioActProduct.idProducto;
-        const fechaDesde = precioActProduct.fechaDesde;
-        const precio = precioActProduct.precio;
 
-        res.json({
-            idProducto,
-            fechaDesde,
-            precio
-        });
+        res.json(
+          precioActProduct
+        );
     } else {
         res.status(404).json({ error: 'No se encontraron precios para el producto' });
     }

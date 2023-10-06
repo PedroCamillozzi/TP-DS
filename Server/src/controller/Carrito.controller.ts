@@ -6,17 +6,24 @@ import { Carrito } from "../model/carrito.producto";
 export const getProductosCliente = async (req:Request, res:Response)=>{
     const {idCliente} = req.params;
 
-    const listaCarritoCliente = await Carrito.findAll({where:{idCliente:idCliente}});
+    try{
+      const listaCarritoCliente = await Carrito.findAll({where:{idCliente:idCliente}});
 
-    if(!listaCarritoCliente){
-        res.status(400).json({
-            msg:"No se pudo obtener la lista del carrito"
-        })
+      if(!listaCarritoCliente){
+          res.status(400).json({
+              msg:"No se pudo obtener la lista del carrito"
+          })
+      }
+
+    res.status(200).json(listaCarritoCliente)
+  
+
+    }catch(error){
+      res.status(500).json({
+        msg: "Error en el servidor"
+      });
     }
 
-    res.json(
-        listaCarritoCliente
-    )
 
 
 }
@@ -41,13 +48,15 @@ export const patchProductoCliente = async (req: Request, res:Response) =>{
         })
         return
     }
-    const carrito = await Carrito.findOne({where:{idCliente:idCliente} && {idProducto:idProducto}});
+    const carrito:any = await Carrito.findOne({where:{idCliente:idCliente} && {idProducto:idProducto}});
 
-    if(producto.stock <= 0 || (carrito.cantidad + cantidad) > producto.stock){
+    if(carrito){
+      if(producto.stock <= 0 || (carrito.cantidad + cantidad) > producto.stock){
         res.status(400).json({
             msg:"No hay stock disponible por el momento"
         })
         return
+    }
     }
         /*Puede el backEnd llamar a una funcion dentro de él? Por ejemplo quiero que no existe el producto dentro del carrito
     que lo cree, en ese caso, puedo llamar a una funcion postCarritoCliente que haga lo de abajo por ejemplo?
@@ -73,7 +82,7 @@ export const patchProductoCliente = async (req: Request, res:Response) =>{
         try {
           await Carrito.update(
             {
-              cantidad: carrito.cantidad + cantidad
+              cantidad: carrito.cantidad
             },
             {
               where: { idCliente: idCliente, idProducto: idProducto },
@@ -89,6 +98,46 @@ export const patchProductoCliente = async (req: Request, res:Response) =>{
         }
       }
       
+}
+
+export const patchAgregarCantidadProductosCliente = async (req:Request, res:Response)=>{
+  const {idCliente, idProducto, cantidad} = req.body;
+
+  try{
+    
+    const productoDeCarritoACambiar:any = await Carrito.findOne({where:{idCliente:idCliente} && {idProducto:idProducto}})
+
+    if(!productoDeCarritoACambiar){
+      res.status(400).json({
+        msg: "No se encontró el producto dentro del carrito"
+      })
+    }
+    const cantidadReal:Number = cantidad - productoDeCarritoACambiar.cantidad
+
+    if((productoDeCarritoACambiar.cantidad + cantidadReal) < 0 ){
+      res.status(400).json({
+        msg:"No puede haber stock negativo"
+      })
+    }
+
+    await Carrito.update(
+    {
+      cantidad: productoDeCarritoACambiar.cantidad + cantidadReal 
+    },
+    {
+      where: { idCliente: idCliente, idProducto: idProducto },
+    }
+    );
+
+    res.status(200).json({
+      msg:"Carrito Actualizado"
+    })
+  }catch(err){
+    res.status(500).json({
+      msg:"Error del servidor"
+    })
+  }
+  
 }
 
 export const deleteProductoCliente = async (req:Request, res:Response)=>{

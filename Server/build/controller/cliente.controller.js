@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.cambiarContraseña = exports.cambiarDatosCliente = exports.getDatosCliente = exports.loginCliente = exports.newCliente = void 0;
 const cliente_model_1 = require("../model/cliente.model");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-exports.newCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const newCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { nombre, apellido, dni, email, contraseña, telefono } = req.body;
     try {
         const existingCliente = yield cliente_model_1.Cliente.findOne({ where: { dni: dni } || { email: email } });
@@ -50,7 +51,8 @@ exports.newCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         });
     }
 });
-exports.loginCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.newCliente = newCliente;
+const loginCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, contraseña } = req.body;
     const cliente = yield cliente_model_1.Cliente.findOne({ where: { email: email } });
     if (!cliente) {
@@ -72,3 +74,86 @@ exports.loginCliente = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const idCliente = cliente.idCliente;
     res.json({ token, idCliente });
 });
+exports.loginCliente = loginCliente;
+const getDatosCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idCliente } = req.params;
+    try {
+        const cliente = yield cliente_model_1.Cliente.findOne({ where: { idCliente: idCliente } });
+        if (!cliente) {
+            return res.status(400).json({ msg: "Cliente no encontrado" });
+        }
+        const clienteFiltrado = {
+            idCliente: cliente.idCliente,
+            nombre: cliente.nombre,
+            apellido: cliente.apellido,
+            telefono: cliente.telefono
+        };
+        return res.status(200).json(clienteFiltrado);
+    }
+    catch (err) {
+        return res.status(500).json({ msg: "Error de servidor" });
+    }
+});
+exports.getDatosCliente = getDatosCliente;
+const cambiarDatosCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idCliente, nombre, apellido, telefono } = req.body;
+    try {
+        const clienteOriginal = yield cliente_model_1.Cliente.findOne({ where: { idCliente: idCliente } });
+        if (!clienteOriginal) {
+            return res.status(400).json({ msg: "Cliente no encontrado" });
+        }
+        cliente_model_1.Cliente.update({
+            nombre: nombre,
+            apellido: apellido,
+            telefono: telefono
+        }, {
+            where: { idCliente: clienteOriginal.idCliente }
+        });
+        res.status(200).json({
+            msg: "Modificado con éxito"
+        });
+    }
+    catch (err) {
+        res.status(400).json({
+            msg: "Error del Servidor"
+        });
+    }
+});
+exports.cambiarDatosCliente = cambiarDatosCliente;
+const cambiarContraseña = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idCliente, contraseñaVieja, contraseñaNueva, repeticionContraseñaNueva } = req.body;
+    try {
+        const cliente = yield cliente_model_1.Cliente.findOne({ where: { idCliente: idCliente } });
+        if (!cliente) {
+            return res.status(400).json({
+                msg: "Cliente inexistente"
+            });
+        }
+        const validaContraseña = yield bcrypt_1.default.compare(contraseñaVieja, cliente.contraseña);
+        if (!validaContraseña) {
+            return res.status(400).json({
+                msg: "La contraseña actual no coincide"
+            });
+        }
+        if (contraseñaNueva != repeticionContraseñaNueva) {
+            return res.status(400).json({
+                msg: "Las nuevas contraseñas no coinciden"
+            });
+        }
+        const hashedPassword = yield bcrypt_1.default.hash(contraseñaNueva, 10);
+        cliente_model_1.Cliente.update({
+            contraseña: hashedPassword
+        }, {
+            where: { idCliente: cliente.idCliente }
+        });
+        res.status(200).json({
+            msg: "Cambio de contraseña exitoso"
+        });
+    }
+    catch (err) {
+        res.status(400).json({
+            msg: "Error del Servidor"
+        });
+    }
+});
+exports.cambiarContraseña = cambiarContraseña;

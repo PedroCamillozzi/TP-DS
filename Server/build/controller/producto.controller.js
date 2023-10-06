@@ -9,13 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.putProducto = exports.postProducto = exports.getProducto = exports.getProductos = void 0;
 const producto_model_1 = require("../model/producto.model");
 const precioProducto_model_1 = require("../model/precioProducto.model");
-exports.getProductos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getProductos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const listaProductos = yield producto_model_1.Producto.findAll();
     res.json(listaProductos);
 });
-exports.getProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getProductos = getProductos;
+const getProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idProducto } = req.params;
     const producto = yield producto_model_1.Producto.findOne({ where: { idProducto: idProducto } });
     if (!producto) {
@@ -26,13 +28,15 @@ exports.getProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     res.json(producto);
 });
-exports.postProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getProducto = getProducto;
+const postProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { nombreProducto, descripcion, detallesGenerales, /*, imagen,*/ precio } = req.body;
     try {
         const producto = yield producto_model_1.Producto.create({
             nombreProducto: nombreProducto,
             descripcion: descripcion,
             detallesGenerales: detallesGenerales,
+            //imagen:imagen 
         });
         yield precioProducto_model_1.PrecioProducto.create({
             idProducto: producto.idProducto,
@@ -50,7 +54,8 @@ exports.postProducto = (req, res) => __awaiter(void 0, void 0, void 0, function*
         body: req.body
     });
 });
-exports.putProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postProducto = postProducto;
+const putProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idProducto, nombreProducto, descripcion, detallesGenerales, fechaDesde, precio } = req.body;
     const producto = yield producto_model_1.Producto.findOne({ where: { idProducto: idProducto } });
     if (!producto) {
@@ -106,3 +111,4 @@ exports.putProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         });
     }
 });
+exports.putProducto = putProducto;

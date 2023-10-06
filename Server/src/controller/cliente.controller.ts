@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Cliente } from "../model/cliente.model";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { where } from "sequelize";
 
 export const newCliente = async (req: Request, res: Response) => {
     const { nombre, apellido, dni, email, contraseña, telefono } = req.body;
@@ -76,4 +77,105 @@ export const loginCliente = async (req:Request, res:Response)=>{
     const idCliente = cliente.idCliente
 
     res.json({token, idCliente})
+}
+
+export const getDatosCliente = async (req:Request, res:Response) => {
+    const {idCliente} = req.params;
+
+    try{
+        const cliente:any = await Cliente.findOne({where: {idCliente:idCliente}});
+        
+        if(!cliente){
+            return res.status(400).json({msg:"Cliente no encontrado"})
+        }
+
+        const clienteFiltrado ={
+            idCliente: cliente.idCliente,
+            nombre: cliente.nombre,
+            apellido: cliente.apellido,
+            telefono: cliente.telefono
+        }
+
+        return res.status(200).json(clienteFiltrado)
+
+    }catch(err){
+        return res.status(500).json({msg:"Error de servidor"})
+    }
+}
+
+export const cambiarDatosCliente = async (req:Request, res:Response)=>{
+    const {idCliente, nombre, apellido, telefono} = req.body
+
+    try{
+        const clienteOriginal:any = await Cliente.findOne({where: {idCliente:idCliente}});
+
+        if(!clienteOriginal){
+            return res.status(400).json({msg:"Cliente no encontrado"})
+        }
+
+        Cliente.update({
+            nombre: nombre,
+            apellido: apellido,
+            telefono: telefono
+        },
+        {
+            where: {idCliente: clienteOriginal.idCliente}
+        })
+
+        res.status(200).json({
+            msg:"Modificado con éxito"
+        })
+    }catch(err){
+        res.status(400).json({
+            msg:"Error del Servidor"
+        })
+    }
+
+}
+
+export const cambiarContraseña = async (req:Request, res:Response)=>{
+    const {idCliente, contraseñaVieja, contraseñaNueva, repeticionContraseñaNueva} = req.body;
+
+    try{
+        const cliente:any = await Cliente.findOne({where:{idCliente:idCliente}});
+
+        if(!cliente){
+            return res.status(400).json({
+                msg:"Cliente inexistente"
+            });
+        }
+
+        const validaContraseña = await bcrypt.compare(contraseñaVieja, cliente.contraseña)
+
+        if(!validaContraseña){
+           return  res.status(400).json({
+                msg:"La contraseña actual no coincide"
+            })
+        }
+
+        if(contraseñaNueva != repeticionContraseñaNueva){
+            return res.status(400).json({
+                msg:"Las nuevas contraseñas no coinciden"
+            })
+
+        }
+
+        const hashedPassword = await bcrypt.hash(contraseñaNueva, 10);
+
+        Cliente.update({
+            contraseña: hashedPassword
+        },
+        {
+            where: {idCliente:cliente.idCliente}
+        })
+
+        res.status(200).json({
+            msg: "Cambio de contraseña exitoso"
+        })
+    }catch(err){
+        res.status(400).json({
+            msg:"Error del Servidor"
+        })
+    }
+
 }

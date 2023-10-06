@@ -9,22 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getPrecioActualProducto = void 0;
 const precioProducto_model_1 = require("../model/precioProducto.model");
-exports.getPrecioActualProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getPrecioActualProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idProducto } = req.params;
     const fechaMax = yield precioProducto_model_1.PrecioProducto.max('fechaDesde', { where: { idProducto: idProducto } });
     const precioActProduct = yield precioProducto_model_1.PrecioProducto.findOne({
         where: { idProducto: idProducto, fechaDesde: fechaMax }
     });
     if (precioActProduct) {
-        const idProducto = precioActProduct.idProducto;
-        const fechaDesde = precioActProduct.fechaDesde;
-        const precio = precioActProduct.precio;
-        res.json({
-            idProducto,
-            fechaDesde,
-            precio
-        });
+        res.json(precioActProduct);
     }
     else {
         res.status(404).json({ error: 'No se encontraron precios para el producto' });
@@ -55,3 +49,4 @@ exports.getPrecioActualProducto = (req, res) => __awaiter(void 0, void 0, void 0
             preciosProducto
         });*/
 });
+exports.getPrecioActualProducto = getPrecioActualProducto;

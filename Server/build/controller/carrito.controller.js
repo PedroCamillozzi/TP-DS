@@ -9,19 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProductoCliente = exports.patchProductoCliente = exports.getProductosCliente = void 0;
+exports.deleteProductoCliente = exports.patchAgregarCantidadProductosCliente = exports.patchProductoCliente = exports.getProductosCliente = void 0;
 const cliente_model_1 = require("../model/cliente.model");
 const producto_model_1 = require("../model/producto.model");
 const carrito_producto_1 = require("../model/carrito.producto");
 const getProductosCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idCliente } = req.params;
-    const listaCarritoCliente = yield carrito_producto_1.Carrito.findAll({ where: { idCliente: idCliente } });
-    if (!listaCarritoCliente) {
-        res.status(400).json({
-            msg: "No se pudo obtener la lista del carrito"
+    try {
+        const listaCarritoCliente = yield carrito_producto_1.Carrito.findAll({ where: { idCliente: idCliente } });
+        if (!listaCarritoCliente) {
+            res.status(400).json({
+                msg: "No se pudo obtener la lista del carrito"
+            });
+        }
+        res.status(200).json(listaCarritoCliente);
+    }
+    catch (error) {
+        res.status(500).json({
+            msg: "Error en el servidor"
         });
     }
-    res.json(listaCarritoCliente);
 });
 exports.getProductosCliente = getProductosCliente;
 const patchProductoCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -41,11 +48,13 @@ const patchProductoCliente = (req, res) => __awaiter(void 0, void 0, void 0, fun
         return;
     }
     const carrito = yield carrito_producto_1.Carrito.findOne({ where: { idCliente: idCliente } && { idProducto: idProducto } });
-    if (producto.stock <= 0 || (carrito.cantidad + cantidad) > producto.stock) {
-        res.status(400).json({
-            msg: "No hay stock disponible por el momento"
-        });
-        return;
+    if (carrito) {
+        if (producto.stock <= 0 || (carrito.cantidad + cantidad) > producto.stock) {
+            res.status(400).json({
+                msg: "No hay stock disponible por el momento"
+            });
+            return;
+        }
     }
     /*Puede el backEnd llamar a una funcion dentro de él? Por ejemplo quiero que no existe el producto dentro del carrito
 que lo cree, en ese caso, puedo llamar a una funcion postCarritoCliente que haga lo de abajo por ejemplo?
@@ -71,7 +80,7 @@ que lo cree, en ese caso, puedo llamar a una funcion postCarritoCliente que haga
     else {
         try {
             yield carrito_producto_1.Carrito.update({
-                cantidad: carrito.cantidad + cantidad
+                cantidad: carrito.cantidad
             }, {
                 where: { idCliente: idCliente, idProducto: idProducto },
             });
@@ -86,6 +95,37 @@ que lo cree, en ese caso, puedo llamar a una funcion postCarritoCliente que haga
     }
 });
 exports.patchProductoCliente = patchProductoCliente;
+const patchAgregarCantidadProductosCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idCliente, idProducto, cantidad } = req.body;
+    try {
+        const productoDeCarritoACambiar = yield carrito_producto_1.Carrito.findOne({ where: { idCliente: idCliente } && { idProducto: idProducto } });
+        if (!productoDeCarritoACambiar) {
+            res.status(400).json({
+                msg: "No se encontró el producto dentro del carrito"
+            });
+        }
+        const cantidadReal = cantidad - productoDeCarritoACambiar.cantidad;
+        if ((productoDeCarritoACambiar.cantidad + cantidadReal) < 0) {
+            res.status(400).json({
+                msg: "No puede haber stock negativo"
+            });
+        }
+        yield carrito_producto_1.Carrito.update({
+            cantidad: productoDeCarritoACambiar.cantidad + cantidadReal
+        }, {
+            where: { idCliente: idCliente, idProducto: idProducto },
+        });
+        res.status(200).json({
+            msg: "Carrito Actualizado"
+        });
+    }
+    catch (err) {
+        res.status(500).json({
+            msg: "Error del servidor"
+        });
+    }
+});
+exports.patchAgregarCantidadProductosCliente = patchAgregarCantidadProductosCliente;
 const deleteProductoCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idCliente, idProducto } = req.params;
     const productoAremover = yield carrito_producto_1.Carrito.findOne({ where: { idCliente: idCliente } && { idProducto: idProducto } });

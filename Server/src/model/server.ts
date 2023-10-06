@@ -11,6 +11,8 @@ import { Pedido } from './pedido.model';
 import routerPrecioProductos from '../routes/precioProducto.routes';
 import routerCarrito from '../routes/carrito.routes';
 import { Carrito } from './carrito.producto';
+import routerPedido from '../routes/pedido.routes';
+import routerDetallePedido from '../routes/detallePedido.routes';
 
 export class Server{
     private app:Application;
@@ -37,7 +39,9 @@ export class Server{
         this.app.use('/client',routerCliente);
         this.app.use('/productos', routerProductos);
         this.app.use('/precioProductos', routerPrecioProductos);
-        this.app.use('/carrito', routerCarrito)
+        this.app.use('/carrito', routerCarrito);
+        this.app.use('/pedido', routerPedido);
+        this.app.use('/detallePedido', routerDetallePedido);
 
     }
 
