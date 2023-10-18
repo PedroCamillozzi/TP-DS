@@ -9,9 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPrecioActualProducto = void 0;
 const precioProducto_model_1 = require("../model/precioProducto.model");
-const getPrecioActualProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getPrecioActualProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idProducto } = req.params;
     const fechaMax = yield precioProducto_model_1.PrecioProducto.max('fechaDesde', { where: { idProducto: idProducto } });
     const precioActProduct = yield precioProducto_model_1.PrecioProducto.findOne({
@@ -49,4 +48,3 @@ const getPrecioActualProducto = (req, res) => __awaiter(void 0, void 0, void 0, 
             preciosProducto
         });*/
 });
-exports.getPrecioActualProducto = getPrecioActualProducto;

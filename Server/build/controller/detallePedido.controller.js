@@ -9,9 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDetallePedidosCliente = void 0;
 const DetallePedido_model_1 = require("../model/DetallePedido.model");
-const getDetallePedidosCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getDetallePedidosCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idPedido } = req.params;
     try {
         const pedidos = yield DetallePedido_model_1.DetallePedido.findAll({ where: { idPedido: idPedido } });
@@ -29,4 +28,3 @@ const getDetallePedidosCliente = (req, res) => __awaiter(void 0, void 0, void 0,
         });
     }
 });
-exports.getDetallePedidosCliente = getDetallePedidosCliente;
