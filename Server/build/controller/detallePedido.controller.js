@@ -16,7 +16,7 @@ const getDetallePedidosCliente = (req, res) => __awaiter(void 0, void 0, void 0,
     try {
         const pedidos = yield DetallePedido_model_1.DetallePedido.findAll({ where: { idPedido: idPedido } });
         if (!pedidos) {
-            res.status(400).json({
+            res.status(404).json({
                 msg: "No se han encontrado los detalles de los pedidos"
             });
             return;

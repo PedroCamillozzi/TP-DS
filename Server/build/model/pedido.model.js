@@ -29,4 +29,6 @@ exports.Pedido = connection_1.default.define('pedido', {
             key: 'idCliente'
         }
     }
+}, {
+    modelName: 'Pedido'
 });

@@ -32,6 +32,8 @@ exports.Producto = connection_1.default.define('producto', {
         type: DataTypes.BLOB,
         allowNull: false
     },*/
+}, {
+    modelName: 'Producto'
 });
 exports.Producto.hasMany(precioProducto_model_1.PrecioProducto, {
     foreignKey: 'idProducto',

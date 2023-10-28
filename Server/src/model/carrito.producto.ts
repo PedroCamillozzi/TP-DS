@@ -25,4 +25,6 @@ export const Carrito = sequelize.define('Carrito', {
         type: DataTypes.INTEGER
     }
 
+},{
+    modelName: 'Carrito'
 })

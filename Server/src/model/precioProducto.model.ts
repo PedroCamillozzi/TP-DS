@@ -19,4 +19,6 @@ export const PrecioProducto = sequelize.define('precioProducto',{
     precio:{
         type: DataTypes.DECIMAL(17,4),      
     }
+},{
+    modelName: 'PrecioProducto'
 })

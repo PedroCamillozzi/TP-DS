@@ -34,6 +34,9 @@ export const Cliente = sequelize.define('cliente', {
     telefono:{
         type: DataTypes.STRING,
         allowNull: false
-    }
+    },
+    
 
+},{
+    modelName: 'Cliente'
 })

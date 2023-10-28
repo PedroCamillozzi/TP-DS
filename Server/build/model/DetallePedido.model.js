@@ -28,4 +28,6 @@ exports.DetallePedido = connection_1.default.define('DetallePedido', {
     cantidad: {
         type: sequelize_1.DataTypes.INTEGER
     },
+}, {
+    modelName: 'DetallePedido'
 });

@@ -38,5 +38,7 @@ exports.Cliente = connection_1.default.define('cliente', {
     telefono: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false
-    }
+    },
+}, {
+    modelName: 'Cliente'
 });

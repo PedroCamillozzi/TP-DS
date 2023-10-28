@@ -24,4 +24,6 @@ export const DetallePedido = sequelize.define('DetallePedido', {
     cantidad:{
         type:DataTypes.INTEGER
     },
+},{
+    modelName: 'DetallePedido'
 })

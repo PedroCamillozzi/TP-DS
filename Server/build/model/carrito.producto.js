@@ -28,4 +28,6 @@ exports.Carrito = connection_1.default.define('Carrito', {
     cantidad: {
         type: sequelize_1.DataTypes.INTEGER
     }
+}, {
+    modelName: 'Carrito'
 });

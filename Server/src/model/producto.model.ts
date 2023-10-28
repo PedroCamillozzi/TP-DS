@@ -29,6 +29,8 @@ export const Producto = sequelize.define('producto', {
         allowNull: false
     },*/
 
+},{
+    modelName: 'Producto'
 })
 
 Producto.hasMany(PrecioProducto, {

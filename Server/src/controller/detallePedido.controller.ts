@@ -8,7 +8,7 @@ export const getDetallePedidosCliente = async (req:Request, res:Response)=>{
       const pedidos = await DetallePedido.findAll({where:{idPedido:idPedido}});
   
       if(!pedidos){
-          res.status(400).json({
+          res.status(404).json({
               msg: "No se han encontrado los detalles de los pedidos"
           })
           return

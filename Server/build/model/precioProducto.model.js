@@ -23,4 +23,6 @@ exports.PrecioProducto = connection_1.default.define('precioProducto', {
     precio: {
         type: sequelize_1.DataTypes.DECIMAL(17, 4),
     }
+}, {
+    modelName: 'PrecioProducto'
 });

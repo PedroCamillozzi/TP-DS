@@ -26,4 +26,6 @@ export const Pedido = sequelize.define('pedido', {
         }
     }
 
+},{
+    modelName: 'Pedido'
 })
