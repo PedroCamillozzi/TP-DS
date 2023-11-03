@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Pedido } from "../model/pedido.model";
+import { Cliente } from "../model/cliente.model";
 
 export const getPedidosCliente = async (req:Request, res:Response) =>{
     const {idCliente} = req.params
@@ -21,4 +22,30 @@ export const getPedidosCliente = async (req:Request, res:Response) =>{
         msg:"Error del servidor"
     })
   }
+}
+
+export const postPedidoCliente = async (req:Request, res:Response) =>{
+  const {idCliente} = req.body;
+
+  const cliente = await Cliente.findOne({where: {idCliente:idCliente}});
+
+  if(cliente){
+    try{
+      const fechaEntrega = new Date();
+      fechaEntrega.setDate(fechaEntrega.getDate() + 27);
+      
+      const pedido = await Pedido.create({
+      fechaPedido: Date.now(),
+      fechaEntrega: fechaEntrega,
+      estado: "En preparacion",
+      idCliente: cliente.idCliente
+
+      })
+      res.status(200).json(pedido);
+    }catch(err){
+      res.status(500).json({
+        msg:"Error en el servidor"
+      })
+    }
+    }
 }

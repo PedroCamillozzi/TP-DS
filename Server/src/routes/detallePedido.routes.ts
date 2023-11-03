@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { getDetallePedidosCliente } from "../controller/detallePedido.controller";
+import { getDetallePedidosCliente, postDetallePedido } from "../controller/detallePedido.controller";
+import validateToken from "../controller/validate.token.controller";
 
 const routerDetallePedido = Router();
 
-routerDetallePedido.get('/:idPedido', getDetallePedidosCliente);
+routerDetallePedido.get('/:idPedido', validateToken, getDetallePedidosCliente);
+routerDetallePedido.post('/', validateToken, postDetallePedido);
 
 export default routerDetallePedido;

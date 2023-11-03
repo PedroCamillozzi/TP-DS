@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { getPrecioActualProducto } from "../controller/precioProducto.controller";
+import { getPrecioActualProducto, getPrecioFechaDeVenta } from "../controller/precioProducto.controller";
 
 
 const routerPrecioProductos = Router();
 
 routerPrecioProductos.get('/:idProducto', getPrecioActualProducto)
+routerPrecioProductos.get('/:idProducto/:fechaVenta', getPrecioFechaDeVenta)
 //routerPrecioProductos.put('') 
 
 

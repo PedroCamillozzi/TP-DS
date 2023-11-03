@@ -165,3 +165,30 @@ export const deleteProductoCliente = async (req:Request, res:Response)=>{
         msg: "Producto removido correctamente"
     })
 }
+
+
+export const deleteAllProductoCliente = async (req:Request, res:Response)=>{
+  const {idCliente} = req.params;
+
+  const productoAremover:any = await Carrito.findOne({where:{idCliente:idCliente}});
+
+  if(!productoAremover){
+      res.status(400).json({
+          msg:"No se pudo obtener la lista del carrito"
+      })
+  }
+
+  try{
+      await Carrito.destroy({
+        where: {idCliente: productoAremover.idCliente}
+      })
+  } catch(error){
+      res.status(400).json({
+          msg: "No se encontro el producto a remover", error
+      })
+  }
+
+  res.status(200).json({
+      msg: "Producto removido correctamente"
+  })
+}

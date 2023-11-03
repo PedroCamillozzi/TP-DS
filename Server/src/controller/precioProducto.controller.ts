@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { PrecioProducto } from "../model/precioProducto.model";
 import { Producto } from "../model/producto.model";
+import { Op } from "sequelize";
 
 export const getPrecioActualProducto = async (req: Request, res: Response) => {
     const { idProducto } = req.params;
@@ -52,5 +53,29 @@ export const getPrecioActualProducto = async (req: Request, res: Response) => {
         res.json({
             preciosProducto
         });*/
+
+}
+
+export const getPrecioFechaDeVenta = async (req:Request, res:Response) =>{
+    const {idProducto, fechaVenta } = req.params
+    
+
+    const fechaMax = await PrecioProducto.max('fechaDesde', { where: { [Op.and]:[{idProducto: {[Op.eq]: idProducto} }, {fechaDesde:{[Op.lte]: fechaVenta}}]} });
+    
+
+    const precioActProduct: any = await PrecioProducto.findOne({
+        where: { idProducto: idProducto, fechaDesde: fechaMax }
+    });
+    
+
+    if (precioActProduct) {
+
+        res.json(
+          precioActProduct
+        );
+    } else {
+        res.status(404).json({ error: 'No se encontraron precios para el producto' });
+    }
+    
 
 }

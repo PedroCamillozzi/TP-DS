@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPrecioActualProducto = void 0;
+exports.getPrecioFechaDeVenta = exports.getPrecioActualProducto = void 0;
 const precioProducto_model_1 = require("../model/precioProducto.model");
+const sequelize_1 = require("sequelize");
 const getPrecioActualProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idProducto } = req.params;
     const fechaMax = yield precioProducto_model_1.PrecioProducto.max('fechaDesde', { where: { idProducto: idProducto } });
@@ -50,3 +51,17 @@ const getPrecioActualProducto = (req, res) => __awaiter(void 0, void 0, void 0, 
         });*/
 });
 exports.getPrecioActualProducto = getPrecioActualProducto;
+const getPrecioFechaDeVenta = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idProducto, fechaVenta } = req.params;
+    const fechaMax = yield precioProducto_model_1.PrecioProducto.max('fechaDesde', { where: { [sequelize_1.Op.and]: [{ idProducto: { [sequelize_1.Op.eq]: idProducto } }, { fechaDesde: { [sequelize_1.Op.lte]: fechaVenta } }] } });
+    const precioActProduct = yield precioProducto_model_1.PrecioProducto.findOne({
+        where: { idProducto: idProducto, fechaDesde: fechaMax }
+    });
+    if (precioActProduct) {
+        res.json(precioActProduct);
+    }
+    else {
+        res.status(404).json({ error: 'No se encontraron precios para el producto' });
+    }
+});
+exports.getPrecioFechaDeVenta = getPrecioFechaDeVenta;

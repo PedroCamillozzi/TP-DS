@@ -1,13 +1,14 @@
 import { Router } from "express";
-import { deleteProductoCliente, getProductosCliente, patchAgregarCantidadProductosCliente, patchProductoCliente } from "../controller/Carrito.controller";
+import { deleteAllProductoCliente, deleteProductoCliente, getProductosCliente, patchAgregarCantidadProductosCliente, patchProductoCliente } from "../controller/Carrito.controller";
 import validateToken from "../controller/validate.token.controller";
 
 
 const routerCarrito = Router();
 
 routerCarrito.get('/:idCliente', validateToken, getProductosCliente);
-routerCarrito.patch('/addItem', patchProductoCliente);
-routerCarrito.patch('/addCantidad', patchAgregarCantidadProductosCliente)
-routerCarrito.delete('/:idCliente/:idProducto', deleteProductoCliente );
+routerCarrito.patch('/addItem', validateToken, patchProductoCliente);
+routerCarrito.patch('/addCantidad', validateToken, patchAgregarCantidadProductosCliente)
+routerCarrito.delete('/:idCliente/:idProducto', validateToken, deleteProductoCliente );
+routerCarrito.delete('/:idCliente', validateToken, deleteAllProductoCliente );
 
 export default routerCarrito;

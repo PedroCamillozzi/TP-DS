@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProductoCliente = exports.patchAgregarCantidadProductosCliente = exports.patchProductoCliente = exports.getProductosCliente = void 0;
+exports.deleteAllProductoCliente = exports.deleteProductoCliente = exports.patchAgregarCantidadProductosCliente = exports.patchProductoCliente = exports.getProductosCliente = void 0;
 const cliente_model_1 = require("../model/cliente.model");
 const producto_model_1 = require("../model/producto.model");
 const carrito_producto_1 = require("../model/carrito.producto");
@@ -149,3 +149,26 @@ const deleteProductoCliente = (req, res) => __awaiter(void 0, void 0, void 0, fu
     });
 });
 exports.deleteProductoCliente = deleteProductoCliente;
+const deleteAllProductoCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idCliente } = req.params;
+    const productoAremover = yield carrito_producto_1.Carrito.findOne({ where: { idCliente: idCliente } });
+    if (!productoAremover) {
+        res.status(400).json({
+            msg: "No se pudo obtener la lista del carrito"
+        });
+    }
+    try {
+        yield carrito_producto_1.Carrito.destroy({
+            where: { idCliente: productoAremover.idCliente }
+        });
+    }
+    catch (error) {
+        res.status(400).json({
+            msg: "No se encontro el producto a remover", error
+        });
+    }
+    res.status(200).json({
+        msg: "Producto removido correctamente"
+    });
+});
+exports.deleteAllProductoCliente = deleteAllProductoCliente;

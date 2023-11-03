@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { DetallePedido } from "../model/DetallePedido.model";
+import { Producto } from "../model/producto.model";
+import { Pedido } from "../model/pedido.model";
 
 export const getDetallePedidosCliente = async (req:Request, res:Response)=>{
     const {idPedido} = req.params
@@ -22,4 +24,23 @@ export const getDetallePedidosCliente = async (req:Request, res:Response)=>{
       })
     }
 
+}
+
+export const postDetallePedido = async (req:Request, res:Response) =>{
+  const {idPedido, idProducto, cantidad} = req.body;
+
+  const pedido = await Pedido.findOne({where:{idPedido:idPedido}});
+
+  if(pedido){
+    const producto = await Producto.findOne({where:{idProducto:idProducto}});
+    if(producto){
+
+      DetallePedido.create({
+        idPedido: pedido.idPedido,
+        idProducto: producto.idProducto,
+        cantidad: cantidad
+      })
+
+    }
+  }
 }

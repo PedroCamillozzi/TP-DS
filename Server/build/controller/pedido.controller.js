@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPedidosCliente = void 0;
+exports.postPedidoCliente = exports.getPedidosCliente = void 0;
 const pedido_model_1 = require("../model/pedido.model");
+const cliente_model_1 = require("../model/cliente.model");
 const getPedidosCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idCliente } = req.params;
     try {
@@ -30,3 +31,26 @@ const getPedidosCliente = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getPedidosCliente = getPedidosCliente;
+const postPedidoCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idCliente } = req.body;
+    const cliente = yield cliente_model_1.Cliente.findOne({ where: { idCliente: idCliente } });
+    if (cliente) {
+        try {
+            const fechaEntrega = new Date();
+            fechaEntrega.setDate(fechaEntrega.getDate() + 27);
+            const pedido = yield pedido_model_1.Pedido.create({
+                fechaPedido: Date.now(),
+                fechaEntrega: fechaEntrega,
+                estado: "En preparacion",
+                idCliente: cliente.idCliente
+            });
+            res.status(200).json(pedido);
+        }
+        catch (err) {
+            res.status(500).json({
+                msg: "Error en el servidor"
+            });
+        }
+    }
+});
+exports.postPedidoCliente = postPedidoCliente;

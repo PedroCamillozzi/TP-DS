@@ -9,8 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDetallePedidosCliente = void 0;
+exports.postDetallePedido = exports.getDetallePedidosCliente = void 0;
 const DetallePedido_model_1 = require("../model/DetallePedido.model");
+const producto_model_1 = require("../model/producto.model");
+const pedido_model_1 = require("../model/pedido.model");
 const getDetallePedidosCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idPedido } = req.params;
     try {
@@ -30,3 +32,18 @@ const getDetallePedidosCliente = (req, res) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.getDetallePedidosCliente = getDetallePedidosCliente;
+const postDetallePedido = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idPedido, idProducto, cantidad } = req.body;
+    const pedido = yield pedido_model_1.Pedido.findOne({ where: { idPedido: idPedido } });
+    if (pedido) {
+        const producto = yield producto_model_1.Producto.findOne({ where: { idProducto: idProducto } });
+        if (producto) {
+            DetallePedido_model_1.DetallePedido.create({
+                idPedido: pedido.idPedido,
+                idProducto: producto.idProducto,
+                cantidad: cantidad
+            });
+        }
+    }
+});
+exports.postDetallePedido = postDetallePedido;
