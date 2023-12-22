@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../db/connection";
 import { Cliente } from "./cliente.model";
+import { DetallePedido } from "./DetallePedido.model";
 
 
 export const Pedido = sequelize.define('pedido', {
@@ -28,4 +29,4 @@ export const Pedido = sequelize.define('pedido', {
 
 },{
     modelName: 'Pedido'
-})
+});

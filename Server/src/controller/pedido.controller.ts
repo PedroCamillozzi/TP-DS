@@ -1,21 +1,46 @@
 import { Request, Response } from "express";
 import { Pedido } from "../model/pedido.model";
 import { Cliente } from "../model/cliente.model";
+import { DetallePedido } from "../model/DetallePedido.model";
+import { Producto } from "../model/producto.model";
+import { PrecioProducto } from "../model/precioProducto.model";
 
 export const getPedidosCliente = async (req:Request, res:Response) =>{
     const {idCliente} = req.params
 
   try{
-    const pedidos = await Pedido.findAll({where:{idCliente:idCliente}});
+  const pedidosCompletos = await Pedido.findAll({
+    where: {
+      idCliente: idCliente
+    },
+    include: {
+      model: DetallePedido,
+      as: 'dp',
+      required: true,
+      include: [{
+        model: Producto,
+        as: 'pro',
+        required: true,
+        include: [{
+          model: PrecioProducto,
+          as: 'precios',
+          required: true
+        }]
+      }]
+    },
+    order: [
+      ['fechaPedido', 'DESC']
+    ]
+  });
 
-    if(!pedidos){
+    if(!pedidosCompletos){
         res.status(404).json({
             msg: "No se han encontrado los pedidos"
         })
         return
     }
 
-    res.status(200).json(pedidos)
+    res.status(200).json(pedidosCompletos)
 
   }catch(err){
     res.status(500).json({

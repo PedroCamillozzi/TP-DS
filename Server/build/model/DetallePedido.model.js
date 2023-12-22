@@ -31,3 +31,11 @@ exports.DetallePedido = connection_1.default.define('DetallePedido', {
 }, {
     modelName: 'DetallePedido'
 });
+exports.DetallePedido.belongsTo(producto_model_1.Producto, {
+    foreignKey: 'idProducto',
+    as: 'pro'
+});
+pedido_model_1.Pedido.hasOne(exports.DetallePedido, {
+    foreignKey: 'idPedido',
+    as: 'dp'
+});

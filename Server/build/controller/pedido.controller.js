@@ -12,17 +12,42 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postPedidoCliente = exports.getPedidosCliente = void 0;
 const pedido_model_1 = require("../model/pedido.model");
 const cliente_model_1 = require("../model/cliente.model");
+const DetallePedido_model_1 = require("../model/DetallePedido.model");
+const producto_model_1 = require("../model/producto.model");
+const precioProducto_model_1 = require("../model/precioProducto.model");
 const getPedidosCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { idCliente } = req.params;
     try {
-        const pedidos = yield pedido_model_1.Pedido.findAll({ where: { idCliente: idCliente } });
-        if (!pedidos) {
+        const pedidosCompletos = yield pedido_model_1.Pedido.findAll({
+            where: {
+                idCliente: idCliente
+            },
+            include: {
+                model: DetallePedido_model_1.DetallePedido,
+                as: 'dp',
+                required: true,
+                include: [{
+                        model: producto_model_1.Producto,
+                        as: 'pro',
+                        required: true,
+                        include: [{
+                                model: precioProducto_model_1.PrecioProducto,
+                                as: 'precios',
+                                required: true
+                            }]
+                    }]
+            },
+            order: [
+                ['fechaPedido', 'DESC']
+            ]
+        });
+        if (!pedidosCompletos) {
             res.status(404).json({
                 msg: "No se han encontrado los pedidos"
             });
             return;
         }
-        res.status(200).json(pedidos);
+        res.status(200).json(pedidosCompletos);
     }
     catch (err) {
         res.status(500).json({

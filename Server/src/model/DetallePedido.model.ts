@@ -27,3 +27,16 @@ export const DetallePedido = sequelize.define('DetallePedido', {
 },{
     modelName: 'DetallePedido'
 })
+
+
+  
+  DetallePedido.belongsTo(Producto, {
+    foreignKey: 'idProducto',
+    as: 'pro' 
+  });
+  
+  Pedido.hasOne(DetallePedido, {
+    foreignKey: 'idPedido',
+    as: 'dp' 
+  });
+  

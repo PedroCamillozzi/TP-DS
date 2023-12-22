@@ -7,6 +7,6 @@ const express_1 = require("express");
 const pedido_controller_1 = require("../controller/pedido.controller");
 const validate_token_controller_1 = __importDefault(require("../controller/validate.token.controller"));
 const routerPedido = (0, express_1.Router)();
-routerPedido.get('/:idCliente', validate_token_controller_1.default, pedido_controller_1.getPedidosCliente);
+routerPedido.get('/:idCliente', /*validateToken,*/ pedido_controller_1.getPedidosCliente);
 routerPedido.post('/', validate_token_controller_1.default, pedido_controller_1.postPedidoCliente);
 exports.default = routerPedido;
