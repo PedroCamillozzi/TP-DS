@@ -16,6 +16,7 @@ exports.cambiarContraseña = exports.cambiarDatosCliente = exports.getDatosClien
 const cliente_model_1 = require("../model/cliente.model");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const tipoUsuario_model_1 = require("../model/tipoUsuario.model");
 const newCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { nombre, apellido, dni, email, contraseña, telefono } = req.body;
     try {
@@ -39,7 +40,8 @@ const newCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             dni: dni,
             email: email,
             contraseña: hashedPassword,
-            telefono: telefono
+            telefono: telefono,
+            tipoUsuario: 2,
         });
         res.status(201).json({
             msg: "Cliente " + nombre + " creado exitosamente"
@@ -72,7 +74,9 @@ const loginCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     //expiresIn: '100000'
     });
     const idCliente = cliente.idCliente;
-    res.json({ token, idCliente });
+    const tipoUsuario = yield tipoUsuario_model_1.TipoUsuario.findOne({ where: { idTipoUsuario: cliente.idTipoUsuario } });
+    const tipoUsuarioNombre = tipoUsuario.descripcion;
+    res.json({ token, idCliente, tipoUsuarioNombre });
 });
 exports.loginCliente = loginCliente;
 const getDatosCliente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -86,7 +90,7 @@ const getDatosCliente = (req, res) => __awaiter(void 0, void 0, void 0, function
             idCliente: cliente.idCliente,
             nombre: cliente.nombre,
             apellido: cliente.apellido,
-            telefono: cliente.telefono
+            telefono: cliente.telefono,
         };
         return res.status(200).json(clienteFiltrado);
     }

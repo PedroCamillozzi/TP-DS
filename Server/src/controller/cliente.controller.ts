@@ -3,6 +3,7 @@ import { Cliente } from "../model/cliente.model";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { where } from "sequelize";
+import { TipoUsuario } from "../model/tipoUsuario.model";
 
 export const newCliente = async (req: Request, res: Response) => {
     const { nombre, apellido, dni, email, contraseña, telefono } = req.body;
@@ -34,7 +35,8 @@ export const newCliente = async (req: Request, res: Response) => {
             dni: dni,
             email: email,
             contraseña: hashedPassword,
-            telefono: telefono
+            telefono: telefono,
+            tipoUsuario: 2,
         });
 
         res.status(201).json({
@@ -76,7 +78,11 @@ export const loginCliente = async (req:Request, res:Response)=>{
 
     const idCliente = cliente.idCliente
 
-    res.json({token, idCliente})
+    const tipoUsuario:any = await TipoUsuario.findOne({where:{idTipoUsuario: cliente.idTipoUsuario}});
+    
+    const tipoUsuarioNombre = tipoUsuario.descripcion;
+
+    res.json({token, idCliente, tipoUsuarioNombre})
 }
 
 export const getDatosCliente = async (req:Request, res:Response) => {
@@ -89,12 +95,14 @@ export const getDatosCliente = async (req:Request, res:Response) => {
             return res.status(400).json({msg:"Cliente no encontrado"})
         }
 
-        const clienteFiltrado ={
+        const clienteFiltrado = {
             idCliente: cliente.idCliente,
             nombre: cliente.nombre,
             apellido: cliente.apellido,
-            telefono: cliente.telefono
+            telefono: cliente.telefono,
         }
+
+        
 
         return res.status(200).json(clienteFiltrado)
 

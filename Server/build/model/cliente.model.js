@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Cliente = void 0;
 const sequelize_1 = require("sequelize");
 const connection_1 = __importDefault(require("../db/connection"));
+const tipoUsuario_model_1 = require("./tipoUsuario.model");
 exports.Cliente = connection_1.default.define('cliente', {
     idCliente: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -39,6 +40,17 @@ exports.Cliente = connection_1.default.define('cliente', {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false
     },
+    idTipoUsuario: {
+        type: sequelize_1.DataTypes.INTEGER,
+        references: {
+            model: tipoUsuario_model_1.TipoUsuario,
+            key: 'idTipoUsuario'
+        }
+    },
 }, {
     modelName: 'Cliente'
+});
+exports.Cliente.hasOne(tipoUsuario_model_1.TipoUsuario, {
+    foreignKey: 'idTipoUsuario',
+    as: 'tipoUsuario'
 });

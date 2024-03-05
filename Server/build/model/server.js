@@ -27,6 +27,7 @@ const carrito_routes_1 = __importDefault(require("../routes/carrito.routes"));
 const carrito_producto_1 = require("./carrito.producto");
 const pedido_routes_1 = __importDefault(require("../routes/pedido.routes"));
 const detallePedido_routes_1 = __importDefault(require("../routes/detallePedido.routes"));
+const tipoUsuario_model_1 = require("./tipoUsuario.model");
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
@@ -56,6 +57,7 @@ class Server {
     dbConnect() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                yield tipoUsuario_model_1.TipoUsuario.sync();
                 yield cliente_model_1.Cliente.sync();
                 yield producto_model_1.Producto.sync();
                 yield precioProducto_model_1.PrecioProducto.sync();

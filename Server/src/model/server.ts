@@ -13,6 +13,7 @@ import routerCarrito from '../routes/carrito.routes';
 import { Carrito } from './carrito.producto';
 import routerPedido from '../routes/pedido.routes';
 import routerDetallePedido from '../routes/detallePedido.routes';
+import { TipoUsuario } from './tipoUsuario.model';
 
 export class Server{
     private app:Application;
@@ -53,12 +54,14 @@ export class Server{
 
     async dbConnect(){
         try{
+            await TipoUsuario.sync();
             await Cliente.sync();
             await Producto.sync();
             await PrecioProducto.sync();
             await Pedido.sync();
             await DetallePedido.sync();
             await Carrito.sync();
+            
         }
         catch(error){
             console.error('No fue posible conectarse a la base de datos', error)

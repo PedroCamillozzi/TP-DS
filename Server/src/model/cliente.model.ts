@@ -1,5 +1,6 @@
 import {DataTypes} from "sequelize";
 import sequelize from "../db/connection";
+import { TipoUsuario } from "./tipoUsuario.model";
 
 
 export const Cliente = sequelize.define('cliente', {
@@ -35,8 +36,20 @@ export const Cliente = sequelize.define('cliente', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    idTipoUsuario:{
+        type:DataTypes.INTEGER,
+        references:{
+            model:TipoUsuario,
+            key: 'idTipoUsuario'
+        }
+    },
     
 
 },{
     modelName: 'Cliente'
+})
+
+Cliente.hasOne(TipoUsuario, {
+    foreignKey: 'idTipoUsuario',
+    as: 'tipoUsuario'
 })
