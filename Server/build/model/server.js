@@ -28,6 +28,9 @@ const carrito_producto_1 = require("./carrito.producto");
 const pedido_routes_1 = __importDefault(require("../routes/pedido.routes"));
 const detallePedido_routes_1 = __importDefault(require("../routes/detallePedido.routes"));
 const tipoUsuario_model_1 = require("./tipoUsuario.model");
+const images_routes_1 = __importDefault(require("../routes/images.routes"));
+const path_1 = __importDefault(require("path"));
+const multer_1 = __importDefault(require("multer"));
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
@@ -49,6 +52,20 @@ class Server {
         this.app.use('/carrito', carrito_routes_1.default);
         this.app.use('/pedido', pedido_routes_1.default);
         this.app.use('/detallePedido', detallePedido_routes_1.default);
+        this.app.use('/images', images_routes_1.default);
+        this.app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, 'uploads')));
+        const storage = multer_1.default.diskStorage({
+            destination: (req, file, cb) => {
+                cb(null, 'uploads');
+            },
+            filename: (req, file, cb) => {
+                cb(null, file.originalname);
+            }
+        });
+        const upload = (0, multer_1.default)({ storage });
+        this.app.post('/file', upload.single('file'), (req, res, next) => );
+        {
+        }
     }
     middlewares() {
         this.app.use(express_1.default.json());
