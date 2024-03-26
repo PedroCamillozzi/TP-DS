@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postPedidoCliente = exports.getPedidosCliente = void 0;
+exports.getPedidos = exports.postPedidoCliente = exports.getPedidosCliente = void 0;
 const pedido_model_1 = require("../model/pedido.model");
 const cliente_model_1 = require("../model/cliente.model");
 const DetallePedido_model_1 = require("../model/DetallePedido.model");
@@ -79,3 +79,34 @@ const postPedidoCliente = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.postPedidoCliente = postPedidoCliente;
+const getPedidos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    /*Cuando sean demasiados pedidos usar un LIMIT*/
+    const pedidosCompletos = yield pedido_model_1.Pedido.findAll({
+        include: {
+            model: DetallePedido_model_1.DetallePedido,
+            as: 'dp',
+            required: true,
+            include: [{
+                    model: producto_model_1.Producto,
+                    as: 'pro',
+                    required: true,
+                    include: [{
+                            model: precioProducto_model_1.PrecioProducto,
+                            as: 'precios',
+                            required: true
+                        }]
+                }]
+        },
+        order: [
+            ['fechaPedido', 'DESC']
+        ]
+    });
+    if (!pedidosCompletos) {
+        res.status(400).json({
+            msg: "No se encontraron pedidos"
+        });
+        return;
+    }
+    return res.status(200).json(pedidosCompletos);
+});
+exports.getPedidos = getPedidos;

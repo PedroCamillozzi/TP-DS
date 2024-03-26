@@ -1,4 +1,4 @@
-import express, { Application, NextFunction } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
 import routerCliente from '../routes/cliente.routes';
 import { Cliente } from './cliente.model';
 import routerProductos from '../routes/productos.routes';
@@ -63,8 +63,8 @@ export class Server{
 
         const upload = multer({storage});
 
-        this.app.post('/file', upload.single('file'), (req:Request, res:Response, next:NextFunction))=>{ 
-        }
+        this.app.post('/file', upload.single('file'), (req:Request, res:Response, next:NextFunction) =>{
+        });
     }
 
     middlewares(){

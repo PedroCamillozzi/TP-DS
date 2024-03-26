@@ -63,9 +63,8 @@ class Server {
             }
         });
         const upload = (0, multer_1.default)({ storage });
-        this.app.post('/file', upload.single('file'), (req, res, next) => );
-        {
-        }
+        this.app.post('/file', upload.single('file'), (req, res, next) => {
+        });
     }
     middlewares() {
         this.app.use(express_1.default.json());

@@ -74,3 +74,38 @@ export const postPedidoCliente = async (req:Request, res:Response) =>{
     }
     }
 }
+
+export const getPedidos = async (req:Request, res: Response) =>{
+  /*Cuando sean demasiados pedidos usar un LIMIT*/
+  const pedidosCompletos = await Pedido.findAll({
+    include: {
+      model: DetallePedido,
+      as: 'dp',
+      required: true,
+      include: [{
+        model: Producto,
+        as: 'pro',
+        required: true,
+        include: [{
+          model: PrecioProducto,
+          as: 'precios',
+          required: true
+        }]
+      }]
+    },
+    order: [
+      ['fechaPedido', 'DESC']
+    ]
+  });
+
+  if(!pedidosCompletos){
+    res.status(400).json({
+      msg:"No se encontraron pedidos"
+    });
+    return;
+  }
+
+  return res.status(200).json(pedidosCompletos);
+  
+
+}

@@ -30,12 +30,13 @@ const getProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.getProducto = getProducto;
 const postProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { nombreProducto, descripcion, detallesGenerales, /*, imagen,*/ precio } = req.body;
+    const { nombreProducto, descripcion, detallesGenerales, stock, /*, imagen,*/ precio } = req.body;
     try {
         const producto = yield producto_model_1.Producto.create({
             nombreProducto: nombreProducto,
             descripcion: descripcion,
             detallesGenerales: detallesGenerales,
+            stock: stock
             //imagen:imagen 
         });
         yield precioProducto_model_1.PrecioProducto.create({
@@ -56,7 +57,7 @@ const postProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.postProducto = postProducto;
 const putProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { idProducto, nombreProducto, descripcion, detallesGenerales, fechaDesde, precio } = req.body;
+    const { idProducto, nombreProducto, descripcion, detallesGenerales, stock, fechaDesde, precio } = req.body;
     const producto = yield producto_model_1.Producto.findOne({ where: { idProducto: idProducto } });
     if (!producto) {
         res.status(400).json({
@@ -67,6 +68,7 @@ const putProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const fechaMax = yield precioProducto_model_1.PrecioProducto.max('fechaDesde', { where: { idProducto: idProducto } });
     //Funciona hasta Acá
     console.log(fechaMax);
+    const precioProducto = yield precioProducto_model_1.PrecioProducto.findOne({ where: { idProducto: idProducto } && { fechaDesde: fechaMax } });
     // const precioAct = await Producto.findAll({where:{idProducto: idProducto},include:[{model:PrecioProducto, required:true, where:{fechaDesde:precioMax}}]}).then(posts => {/*...*/})
     // Select p.idProducto, nombreProducto, descripcion, detallesGenerales From productos p Inner Join PrecioProducto pp ON pp.idProducto = p.idProducto Where pp.fechaDesde = precioMax(es la fecha)
     /*const productos = await sequelize.query( //No me gusta usarla así por el SQLInyedction
@@ -82,19 +84,23 @@ const putProducto = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         msg: productos.fechaDesde
     })*/
     try {
-        producto.update({
-            nombreProducto: nombreProducto,
-            descripcion: descripcion,
-            detallesGenerales: detallesGenerales
-        }, {
-            where: {
-                idProducto: idProducto
-            }
-        });
-        if (fechaDesde !== undefined && fechaMax !== fechaDesde) {
+        if (producto.nombreProducto !== nombreProducto || producto.descripcion !== descripcion || producto.detallesGenerales !== detallesGenerales || producto.stock !== stock) {
+            producto.update({
+                nombreProducto: nombreProducto,
+                descripcion: descripcion,
+                detallesGenerales: detallesGenerales,
+                stock: stock
+            }, {
+                where: {
+                    idProducto: idProducto
+                }
+            });
+        }
+        if (fechaDesde !== undefined && fechaMax !== fechaDesde && precioProducto.precio !== precio) {
             precioProducto_model_1.PrecioProducto.create({
                 idProducto: producto.idProducto,
-                fechaDesde: fechaDesde
+                fechaDesde: fechaDesde,
+                precio: precio
             });
             res.status(200).json({
                 msg: "Precio y Producto Actualizado"
