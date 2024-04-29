@@ -95,11 +95,15 @@ export const getDatosCliente = async (req:Request, res:Response) => {
             return res.status(400).json({msg:"Cliente no encontrado"})
         }
 
+        const tipoUsuarioCliente:any = await TipoUsuario.findOne({where:{idTipoUsuario: cliente.idTipoUsuario}})
+
         const clienteFiltrado = {
             idCliente: cliente.idCliente,
             nombre: cliente.nombre,
             apellido: cliente.apellido,
             telefono: cliente.telefono,
+            idTipoUsuario : cliente.idTipoUsuario,
+            nombreTipoUsuario: tipoUsuarioCliente.descripcion
         }
 
         

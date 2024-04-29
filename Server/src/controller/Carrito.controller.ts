@@ -31,7 +31,7 @@ export const getProductosCliente = async (req:Request, res:Response)=>{
 export const patchProductoCliente = async (req: Request, res:Response) =>{
     const {idCliente, idProducto, cantidad} = req.body;
 
-    const cliente = await Cliente.findOne({where: {idCliente:idCliente}});
+    const cliente:any = await Cliente.findOne({where: {idCliente:idCliente}});
 
     if(!cliente){
         res.status(400).json({
@@ -40,7 +40,7 @@ export const patchProductoCliente = async (req: Request, res:Response) =>{
         return
     }
 
-    const producto = await Producto.findOne({where:{idProducto:idProducto}});
+    const producto:any = await Producto.findOne({where:{idProducto:idProducto}});
 
     if(!producto){
         res.status(400).json({
@@ -143,7 +143,7 @@ export const patchAgregarCantidadProductosCliente = async (req:Request, res:Resp
 export const deleteProductoCliente = async (req:Request, res:Response)=>{
     const {idCliente, idProducto} = req.params;
 
-    const productoAremover = await Carrito.findOne({where:{idCliente:idCliente} && {idProducto:idProducto}});
+    const productoAremover:any = await Carrito.findOne({where:{idCliente:idCliente} && {idProducto:idProducto}});
 
     if(!productoAremover){
         res.status(400).json({

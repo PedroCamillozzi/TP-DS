@@ -42,10 +42,11 @@ export class Server{
     }
 
     routes(){
-        this.app.use('/client',routerCliente);
+        this.app.use('/client', routerCliente);
         this.app.use('/productos', routerProductos);
         this.app.use('/precioProductos', routerPrecioProductos);
-        this.app.use('/carrito', routerCarrito);
+        //this.app.use('/carrito', routerCarrito);
+        routerCarrito(this.app)
         this.app.use('/pedido', routerPedido);
         this.app.use('/detallePedido', routerDetallePedido);
         this.app.use('/images', routerImages);

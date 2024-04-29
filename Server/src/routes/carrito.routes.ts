@@ -11,4 +11,4 @@ routerCarrito.patch('/addCantidad', validateToken, patchAgregarCantidadProductos
 routerCarrito.delete('/:idCliente/:idProducto', validateToken, deleteProductoCliente );
 routerCarrito.delete('/:idCliente', validateToken, deleteAllProductoCliente );
 
-export default routerCarrito;
+export default (app:any) => app.use('/carrito', routerCarrito);
