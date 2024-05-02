@@ -87,12 +87,11 @@ export const loginCliente = async (req:Request, res:Response)=>{
 
 export const getDatosCliente = async (req:Request, res:Response) => {
     const {idCliente} = req.params;
-
-    try{
+    try{        
         const cliente:any = await Cliente.findOne({where: {idCliente:idCliente}});
         
         if(!cliente){
-            return res.status(400).json({msg:"Cliente no encontrado"})
+            return res.status(400).json({msg:"Cliente no encontradoooo"})
         }
 
         const tipoUsuarioCliente:any = await TipoUsuario.findOne({where:{idTipoUsuario: cliente.idTipoUsuario}})
@@ -102,12 +101,12 @@ export const getDatosCliente = async (req:Request, res:Response) => {
             nombre: cliente.nombre,
             apellido: cliente.apellido,
             telefono: cliente.telefono,
-            idTipoUsuario : cliente.idTipoUsuario,
+            idTipoUsuario: cliente.idTipoUsuario,
             nombreTipoUsuario: tipoUsuarioCliente.descripcion
         }
 
         
-
+        
         return res.status(200).json(clienteFiltrado)
 
     }catch(err){
