@@ -9,4 +9,4 @@ function testServer(route: any) {
     return supertest(app);
 }
 
-export = testServer;
+export default testServer;

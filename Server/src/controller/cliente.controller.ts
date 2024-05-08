@@ -36,7 +36,7 @@ export const newCliente = async (req: Request, res: Response) => {
             email: email,
             contraseña: hashedPassword,
             telefono: telefono,
-            tipoUsuario: 2,
+            idTipoUsuario: 2
         });
 
         res.status(201).json({
@@ -104,8 +104,6 @@ export const getDatosCliente = async (req:Request, res:Response) => {
             idTipoUsuario: cliente.idTipoUsuario,
             nombreTipoUsuario: tipoUsuarioCliente.descripcion
         }
-
-        
         
         return res.status(200).json(clienteFiltrado)
 

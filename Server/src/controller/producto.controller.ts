@@ -31,7 +31,7 @@ export const postProducto = async (req:Request, res:Response) =>{
     const {nombreProducto, descripcion, detallesGenerales, stock,/*, imagen,*/ precio} = req.body;
 
     try{
-        const producto =  await Producto.create({
+        const producto:any =  await Producto.create({
             nombreProducto: nombreProducto,
             descripcion:descripcion,
             detallesGenerales:detallesGenerales,
@@ -62,7 +62,7 @@ export const postProducto = async (req:Request, res:Response) =>{
 export const putProducto = async (req:Request, res:Response) =>{
     const {idProducto, nombreProducto, descripcion, detallesGenerales, stock, fechaDesde, precio} = req.body;
 
-    const producto = await Producto.findOne({where:{idProducto: idProducto}});
+    const producto:any = await Producto.findOne({where:{idProducto: idProducto}});
 
     if(!producto){
         res.status(400).json({
@@ -72,30 +72,8 @@ export const putProducto = async (req:Request, res:Response) =>{
     }
 
     const fechaMax = await PrecioProducto.max('fechaDesde',{where:{idProducto:idProducto}})
-    //Funciona hasta Acá
-    console.log(fechaMax);
 
-    const precioProducto = await PrecioProducto.findOne({where:{idProducto:idProducto}&&{fechaDesde:fechaMax}})
-
-
-    
-
-    // const precioAct = await Producto.findAll({where:{idProducto: idProducto},include:[{model:PrecioProducto, required:true, where:{fechaDesde:precioMax}}]}).then(posts => {/*...*/})
-    
-    // Select p.idProducto, nombreProducto, descripcion, detallesGenerales From productos p Inner Join PrecioProducto pp ON pp.idProducto = p.idProducto Where pp.fechaDesde = precioMax(es la fecha)
-
-    /*const productos = await sequelize.query( //No me gusta usarla así por el SQLInyedction
-        'Select p.idProducto, p.nombreProducto, p.descripcion, p.detallesGenerales, pp.fechaDesde From productos p Inner Join PrecioProductos pp ON pp.idProducto = p.idProducto Where Date(pp.fechaDesde) = Date(?)',
-        {
-            replacements:[fechaMax], //No se porque me toma 3hs distintas a lo que está cargado en la BBDD y tengo que usar la funcion Date() Para que ande
-            type: QueryTypes.SELECT,
-            
-        }
-    )
-    console.log(productos);
-    res.json({
-        msg: productos.fechaDesde
-    })*/
+    const precioProducto:any = await PrecioProducto.findOne({where:{idProducto:idProducto}&&{fechaDesde:fechaMax}})
 
    
     try{
