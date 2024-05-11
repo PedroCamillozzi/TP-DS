@@ -1,4 +1,4 @@
-import express, { Application, NextFunction, Request, Response } from 'express';
+import express, { Application, NextFunction, Request, Response, application } from 'express';
 import routerCliente from '../routes/cliente.routes';
 import { Cliente } from './cliente.model';
 import routerProductos from '../routes/productos.routes';
@@ -19,7 +19,7 @@ import path from 'path';
 import multer from 'multer';
 
 export class Server{
-    private app:Application;
+    public app:Application;
     private port:string;
 
     constructor(){
@@ -45,8 +45,7 @@ export class Server{
         this.app.use('/client', routerCliente);
         this.app.use('/productos', routerProductos);
         this.app.use('/precioProductos', routerPrecioProductos);
-        //this.app.use('/carrito', routerCarrito);
-        routerCarrito(this.app)
+        this.app.use('/carrito', routerCarrito);
         this.app.use('/pedido', routerPedido);
         this.app.use('/detallePedido', routerDetallePedido);
         this.app.use('/images', routerImages);

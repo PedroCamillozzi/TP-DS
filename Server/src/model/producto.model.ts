@@ -24,11 +24,6 @@ export const Producto = sequelize.define('producto', {
     stock:{
         type: DataTypes.INTEGER
     }
-    /*imagen:{
-        type: DataTypes.BLOB,
-        allowNull: false
-    },*/
-
 },{
     modelName: 'Producto'
 })

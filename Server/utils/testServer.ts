@@ -3,10 +3,9 @@ import supertest from 'supertest'
 
 
 
-function testServer(route: any) {
+function testServer() {
     const app = express();
-    route(app);
     return supertest(app);
 }
 
-export = testServer;
+export default testServer;

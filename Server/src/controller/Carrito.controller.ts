@@ -9,10 +9,11 @@ export const getProductosCliente = async (req:Request, res:Response)=>{
     try{
       const listaCarritoCliente = await Carrito.findAll({where:{idCliente:idCliente}});
 
-      if(!listaCarritoCliente){
+      if(listaCarritoCliente.length === 0){
           res.status(400).json({
               msg:"No se pudo obtener la lista del carrito"
           })
+          return
       }
 
     res.status(200).json(listaCarritoCliente)
