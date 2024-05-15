@@ -49,8 +49,17 @@ export const patchProductoCliente = async (req: Request, res:Response) =>{
         })
         return
     }
-    const carrito:any = await Carrito.findOne({where:{idCliente:idCliente} && {idProducto:idProducto}});
 
+    if(producto.stock <= 0){
+      res.status(400).json({
+        msg: "No hay stock"
+      })
+      return
+    }
+      
+    const carrito:any = await Carrito.findOne({where:{idCliente:idCliente, idProducto:idProducto}});
+
+    
     if(carrito){
       if(producto.stock <= 0 || (carrito.cantidad + cantidad) > producto.stock){
         res.status(400).json({
@@ -59,9 +68,6 @@ export const patchProductoCliente = async (req: Request, res:Response) =>{
         return
     }
     }
-        /*Puede el backEnd llamar a una funcion dentro de él? Por ejemplo quiero que no existe el producto dentro del carrito
-    que lo cree, en ese caso, puedo llamar a una funcion postCarritoCliente que haga lo de abajo por ejemplo?
-    */
     if (!carrito) {
         try {
           await Carrito.create({

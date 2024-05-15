@@ -35,7 +35,7 @@ export const getProducto = async (req:Request, res:Response) =>{
             return
         }
     
-        res.json(producto)
+        res.status(200).json(producto)
     }catch(error){
         res.status(500).json({
             msg: 'Error en el servidor'
@@ -66,7 +66,7 @@ export const postProducto = async (req:Request, res:Response) =>{
         })
         
     }catch(error){
-        res.status(400).json({
+        res.status(500).json({
             msg:"Ocurrió un error", error
         })
 
@@ -75,24 +75,25 @@ export const postProducto = async (req:Request, res:Response) =>{
 
 export const putProducto = async (req:Request, res:Response) =>{
     const {idProducto, nombreProducto, descripcion, detallesGenerales, stock, fechaDesde, precio} = req.body;
-
-    const producto:any = await Producto.findOne({where:{idProducto: idProducto}});
-
-    if(!producto){
-        res.status(400).json({
-            msg:"No existe el producto"
-        })
-        return
-    }
-
-    const fechaMax = await PrecioProducto.max('fechaDesde',{where:{idProducto:idProducto}})
-
-    const precioProducto:any = await PrecioProducto.findOne({where:{idProducto:idProducto}&&{fechaDesde:fechaMax}})
-
    
     try{
+        
+
+        const producto:any = await Producto.findOne({where:{idProducto: idProducto}});
+    
+        if(!producto){
+            res.status(400).json({
+                msg:"No existe el producto"
+            })
+            return
+        }
+    
+        const fechaMax = await PrecioProducto.max('fechaDesde',{where:{idProducto:idProducto}})
+    
+        const precioProducto:any = await PrecioProducto.findOne({where:{idProducto:idProducto}&&{fechaDesde:fechaMax}})
+    
         if(producto.nombreProducto !== nombreProducto || producto.descripcion !== descripcion || producto.detallesGenerales !== detallesGenerales || producto.stock !== stock){
-            producto.update({
+            await producto.update({
                 nombreProducto: nombreProducto,
                 descripcion: descripcion,
                 detallesGenerales: detallesGenerales,
@@ -104,7 +105,7 @@ export const putProducto = async (req:Request, res:Response) =>{
             })
         }
         if(fechaDesde !== undefined && fechaMax !== fechaDesde && precioProducto!.precio !== precio){
-            PrecioProducto.create({
+            await PrecioProducto.create({
                 idProducto: producto.idProducto,
                 fechaDesde: fechaDesde,
                 precio: precio
@@ -119,11 +120,40 @@ export const putProducto = async (req:Request, res:Response) =>{
         })
 
     }catch(error){
-        res.status(400).json({
-            msg: "Ocurrio un error", error
+        res.status(500).json({
+            msg: "Ocurrió un error", error
         })
     }
 
 
+}
+
+export const deleteProducto = async (req:Request, res:Response) =>{
+    const {idProducto} = req.params
+
+    try{
+        const producto = await Producto.findOne({where:{idProducto: idProducto}});
+
+        if(!producto){
+            res.status(400).json({
+                msg: "No se puedo encontrar en producto"
+            })
+            return
+        }
+
+        await Producto.destroy({
+            where:{idProducto:idProducto}
+        })
+
+        return res.status(200).json({
+            msg:"Producto removido"
+        })
+
+    }
+    catch(error){
+        res.status(500).json({
+            msg:"Ocurrió un error"
+        })
+    }
 }
    
