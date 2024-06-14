@@ -71,6 +71,7 @@ export const loginCliente = async (req:Request, res:Response)=>{
 
     const token = jwt.sign({
         email: email,
+        idCliente: cliente.idCliente
     }, process.env.SECRETKEY || '332211', {
         //expiresIn: '100000'
     }
