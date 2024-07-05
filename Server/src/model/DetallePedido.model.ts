@@ -35,7 +35,7 @@ export const DetallePedido = sequelize.define('DetallePedido', {
     as: 'pro' 
   });
   
-  Pedido.hasOne(DetallePedido, {
+  Pedido.hasMany(DetallePedido, {
     foreignKey: 'idPedido',
     as: 'dp' 
   });

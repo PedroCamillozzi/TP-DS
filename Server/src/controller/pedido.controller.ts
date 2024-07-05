@@ -13,7 +13,7 @@ export const getPedidosCliente = async (req:Request, res:Response) =>{
     where: {
       idCliente: idCliente
     },
-    include: {
+    include: [{
       model: DetallePedido,
       as: 'dp',
       required: true,
@@ -27,7 +27,7 @@ export const getPedidosCliente = async (req:Request, res:Response) =>{
           required: true
         }]
       }]
-    },
+    }],
     order: [
       ['fechaPedido', 'DESC']
     ]

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { deleteAllProductoCliente, deleteProductoCliente, getProductosCliente, patchAgregarCantidadProductosCliente, patchProductoCliente } from "../controller/Carrito.controller";
-import validateToken from "../controller/validate.token.controller";
+import validateToken from "../middleware/validate.token.controller";
 
 
 const routerCarrito = Router();

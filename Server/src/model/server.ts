@@ -15,8 +15,8 @@ import routerPedido from '../routes/pedido.routes';
 import routerDetallePedido from '../routes/detallePedido.routes';
 import { TipoUsuario } from './tipoUsuario.model';
 import routerImages from '../routes/images.routes';
-import path from 'path';
-import multer from 'multer';
+import upload from '../middleware/imageConfig';
+
 
 export class Server{
     public app:Application;
@@ -49,32 +49,12 @@ export class Server{
         this.app.use('/pedido', routerPedido);
         this.app.use('/detallePedido', routerDetallePedido);
         this.app.use('/images', routerImages);
-
-        this.app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-        
-        const storage = multer.diskStorage({
-            destination:(req, file, cb)=>{
-                cb(null, 'uploads');
-            },
-            filename: (req, file, cb) =>{
-                cb(null, file.originalname);
-            }
-        });
-
-        const upload = multer({storage});
-
-        this.app.post('/file', upload.single('file'), (req:Request, res:Response, next:NextFunction) =>{
-        });
     }
 
     middlewares(){
         this.app.use(express.json());
 
         this.app.use(cors());
-
-  
-
-
     }
 
     async dbConnect(){

@@ -69,19 +69,20 @@ export const loginCliente = async (req:Request, res:Response)=>{
         })
     }
 
-    const token = jwt.sign({
-        email: email,
-        idCliente: cliente.idCliente
-    }, process.env.SECRETKEY || '332211', {
-        //expiresIn: '100000'
-    }
-    );
-
     const idCliente = cliente.idCliente
 
     const tipoUsuario:any = await TipoUsuario.findOne({where:{idTipoUsuario: cliente.idTipoUsuario}});
     
     const tipoUsuarioNombre = tipoUsuario.descripcion;
+
+    const token = jwt.sign({
+        email: email,
+        idCliente: cliente.idCliente,
+        tipoUsuario: tipoUsuario.descripcion
+    }, process.env.SECRETKEY || '332211', {
+        //expiresIn: '100000'
+    }
+    );
 
     res.json({token, idCliente, tipoUsuarioNombre})
 }

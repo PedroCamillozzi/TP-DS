@@ -12,7 +12,7 @@ const validateToken = (req:Request, res:Response, next:NextFunction)=>{
             jtw.verify(bearerToken, process.env.SECRETKEY || '332211')
 
         }catch(error){
-            res.status(401).json({
+            return res.status(401).json({
                 msg:"Token no Valido"
             })
 

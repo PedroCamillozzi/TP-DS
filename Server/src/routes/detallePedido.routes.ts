@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getDetallePedidosCliente, postDetallePedido } from "../controller/detallePedido.controller";
-import validateToken from "../controller/validate.token.controller";
+import validateToken from "../middleware/validate.token.controller";
 
 const routerDetallePedido = Router();
 
